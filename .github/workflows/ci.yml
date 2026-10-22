@@ -13,7 +13,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
+      - name: upload Build Artifacts
+        uses: action/upload-artifact@v4
+        with:
+        name: web-build-output
+        path: dist/
       - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
