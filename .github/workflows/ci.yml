@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    name: 🏗️ Verify TypeScript & Vite Build
     name: Build Web App & upload Artifact
     runs-on: ubuntu-latest
     steps:
@@ -30,7 +29,7 @@ jobs:
       - name: Build Production Bundle
         run: npm run build
       - name: Upload Build Artifacts
-        uses: action/upload-artifacts@v4
+        uses: action/upload-artifact@v4
         with:
         name: web-build-output
         path: dist\
