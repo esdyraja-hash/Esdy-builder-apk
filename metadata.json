@@ -1,0 +1,6 @@
+{
+  "name": "ESDY APK & AAB Studio - Gradle Builder & CI/CD Pipeline",
+  "description": "Standalone local Android APK & AAB Builder with Gradle multi-module support, signing configurations, automated versioning, CI/CD pipelines, telemetry-free analytics, and Google Play Store compliance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
