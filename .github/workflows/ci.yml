@@ -32,7 +32,7 @@ jobs:
         uses: action/upload-artifact@v4
         with:
         name: web-build-output
-        path: dist\
+        path: dist/
 
 name: Build Production Bundle
         run: npm run build
