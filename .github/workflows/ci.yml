@@ -33,6 +33,3 @@ jobs:
         with:
         name: web-build-output
         path: dist/
-
-name: Build Production Bundle
-        run: npm run build
