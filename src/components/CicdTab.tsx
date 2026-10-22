@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CicdPipelineConfig, ProjectSettings } from '../types';
 import { CicdGenerator } from '../services/cicdGenerator';
+import { DownloadHelper } from '../services/downloadHelper';
 import { 
   GitBranch, 
   Copy, 
@@ -10,7 +11,9 @@ import {
   CheckCircle2, 
   ShieldAlert, 
   ExternalLink,
-  Workflow
+  Workflow,
+  Sparkles,
+  Github
 } from 'lucide-react';
 
 interface CicdTabProps {
@@ -51,12 +54,7 @@ export const CicdTab: React.FC<CicdTabProps> = ({
 
   const handleDownloadYaml = () => {
     const blob = new Blob([activeYaml], { type: 'text/yaml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(url);
+    DownloadHelper.download(blob, fileName, 'text/yaml');
   };
 
   return (
@@ -270,9 +268,55 @@ export const CicdTab: React.FC<CicdTabProps> = ({
             </div>
 
             {/* Code Content */}
-            <pre className="p-5 font-mono text-xs leading-relaxed text-slate-300 overflow-x-auto max-h-[640px] scrollbar-thin select-all">
+            <pre className="p-5 font-mono text-xs leading-relaxed text-slate-300 overflow-x-auto max-h-[500px] scrollbar-thin select-all">
               {activeYaml}
             </pre>
+          </div>
+
+          {/* Quick Push to GitHub Card */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm text-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Github className="w-4 h-4 text-cyan-400" />
+                <span className="font-bold text-white text-sm">
+                  How to Push to GitHub &amp; Trigger Actions
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  copyToClipboard(
+                    `# 1. Initialize Git\ngit init\n\n# 2. Add all files including the workflow\ngit add .\ngit commit -m "Add Android CI/CD workflow"\n\n# 3. Set branch and push\ngit branch -M main\ngit remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git\ngit push -u origin main`,
+                    'git-cmd'
+                  )
+                }
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-900 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors"
+              >
+                {copiedKey === 'git-cmd' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedKey === 'git-cmd' ? 'Commands Copied!' : 'Copy Git Commands'}</span>
+              </button>
+            </div>
+
+            <p className="text-slate-300 leading-relaxed">
+              The workflow file is configured at <code className="text-cyan-300 font-mono bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">.github/workflows/android-release.yml</code>. Whenever you push commits or tags to GitHub, GitHub Actions will automatically compile your signed <strong>APK</strong> and <strong>AAB</strong> and attach them to your build artifacts.
+            </p>
+
+            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 font-mono text-[11px] text-slate-300 space-y-1 overflow-x-auto">
+              <div className="text-slate-500"># Run these commands in your project terminal:</div>
+              <div className="text-emerald-400">git init</div>
+              <div className="text-emerald-400">git add .</div>
+              <div className="text-emerald-400">git commit -m "Add Android CI/CD workflow"</div>
+              <div className="text-emerald-400">git branch -M main</div>
+              <div className="text-emerald-400">git remote add origin https://github.com/&lt;YOUR_USERNAME&gt;/&lt;YOUR_REPO&gt;.git</div>
+              <div className="text-emerald-400">git push -u origin main</div>
+            </div>
+
+            <div className="p-3 bg-cyan-950/40 border border-cyan-800/50 rounded-xl text-cyan-200 text-[11px] flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+              <span>
+                <strong>Tip:</strong> Don't forget to set up your Keystore credentials under <strong>Repository Settings &gt; Secrets and variables &gt; Actions</strong> so GitHub Actions can sign your release packages automatically.
+              </span>
+            </div>
           </div>
         </div>
 

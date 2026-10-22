@@ -1,6 +1,8 @@
 import JSZip from 'jszip';
 import { BuildVariant, ProjectSettings, SigningConfig } from '../types';
 import { GradleGenerator } from './gradleGenerator';
+import { CicdGenerator } from './cicdGenerator';
+import { StorageService } from './storageService';
 
 export class BundleBuilder {
   /**
@@ -206,6 +208,11 @@ SHA-256-Digest: ${signing.sha256Fingerprint}
       'gradlew',
       `#!/bin/sh\nexec "$(dirname "$0")/gradle/wrapper/gradle-wrapper.jar" "$@"\n`
     );
+
+    // GitHub Actions Workflow for automated building upon commit
+    const cicdConfig = StorageService.loadCicd();
+    const githubWorkflow = CicdGenerator.generateGitHubActions(settings, cicdConfig);
+    zip.folder('.github')?.folder('workflows')?.file('android-release.yml', githubWorkflow);
 
     // Signing files
     zip.file('signing-credentials.properties', GradleGenerator.generateAppBuildGradle(settings, signing));
